@@ -1,0 +1,60 @@
+#include<lpc17xx.h>
+
+ void lcd_init();
+ void cmd_send(uint32_t);
+ void data_send(uint32_t);
+ void delay(uint32_t);
+ 
+int main()
+{
+	  LPC_GPIO0->FIODIR =(0xff<<15);
+    LPC_GPIO1->FIODIR |=(1<<19)|(1<<20)|(1<<21);
+	  lcd_init();
+	
+	while(1)
+	{
+		 cmd_send(0xc0);
+		 data_send('A');
+		
+	}
+}
+
+void lcd_init()
+{
+  cmd_send(0x38);
+	cmd_send(0x01);
+	cmd_send(0x0c);
+	cmd_send(0x06);
+}
+
+void cmd_send(uint32_t x)
+{
+	 LPC_GPIO0->FIOPIN =(x<<15);
+	 LPC_GPIO1->FIOCLR |=(1<<19);
+	 LPC_GPIO1->FIOCLR |=(1<<20);
+	 LPC_GPIO1->FIOSET |=(1<<21);
+	 delay(100000);
+	 LPC_GPIO1->FIOCLR |=(1<<21);
+	 delay(100000);
+}
+
+void data_send(uint32_t y)
+{
+	 LPC_GPIO0->FIOPIN =(y<<15);
+	 LPC_GPIO1->FIOSET |=(1<<19);
+	 LPC_GPIO1->FIOCLR |=(1<<20);
+	 LPC_GPIO1->FIOSET |=(1<<21);
+	 delay(1000000);
+	 LPC_GPIO1->FIOCLR |=(1<<21);
+	 delay(1000000);
+}
+
+void delay(uint32_t j)
+{
+	 uint32_t i;
+	for(i=0;i<=j;i++);
+}
+
+
+	
+	
